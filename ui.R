@@ -3,8 +3,18 @@ library(shiny)
 # UI definition for distribution tool
 shinyUI(pageWithSidebar(
   
-  # title
-  headerPanel("STAT 2160 Distribution Visualization Tool"),
+  # title  
+  headerPanel(
+    HTML(
+      '<div id="logo_header">
+            STAT 2160 Distribution Visualization Tool
+            <a href="http://www.stat.wmich.edu/s216" target="_blank">
+            <img id="bronco_logo" align="right" alt="Western Logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Western_Michigan_University_seal.svg/200px-Western_Michigan_University_seal.svg.png" height="105" width="105" />
+            </a>
+            </div>'
+    ),
+    "STAT 2160 Distribution Visualization Tool"
+    ),
   
   # Sidebar for choosing distribution type, sample size, # of means, etc.
   sidebarPanel(
@@ -12,15 +22,18 @@ shinyUI(pageWithSidebar(
                  list("Normal" = "norm",
                       "Uniform" = "unif",
                       "Log-normal" = "lnorm",
-                      "Exponential" = "exp")),
+                      "Exponential" = "exp",
+                      "Logistic" = "logis"
+                      )),
+    
     br(),
     
-
     sliderInput("n", 
                 "Number of observations (n):", 
                 value = 500,
                 min = 1, 
-                max = 5000),
+                max = 5000,
+                step = 100),
     
     # animation looping for number of sample means to take
     # note: interval controls the speed in ms between steps
@@ -29,12 +42,14 @@ shinyUI(pageWithSidebar(
                 "Sample Size for Sample Mean (sample):",
                 value = 5,
                 min = 1,
-                max = 500),
+                max = 500,
+                step = 5),
     
     sliderInput("N",
                 "Number of Sample Means (N):", 1,500,1,step=1,
                 animate=animationOptions(interval=200, loop=T)),
     
+    checkboxInput("density", "Show density", FALSE),    
     
     br(),
     
