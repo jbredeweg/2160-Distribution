@@ -3,7 +3,7 @@ library(shiny)
 allMeans <- NULL
 
 # server logic
-shinyServer(function(input, output) {
+shinyServer(function(input, output) {  
   
   #generate data from selected distribution
   data <- reactive({  
@@ -13,6 +13,7 @@ shinyServer(function(input, output) {
                    unif = runif,
                    lnorm = rlnorm,
                    exp = rexp,
+                   logis = rlogis,
                    rnorm)
     
     dist(input$n)
@@ -35,18 +36,28 @@ shinyServer(function(input, output) {
     
     hist(data(), 
          main=paste("Observations: ",'r', dist, " ~ (",round(mean(data()),3),",",round(sd(data()),3),")", sep=''),
-         col = "brown")
+         xlim=c(min(data()),max(data())),
+         col = rgb(.2,.0628,0), border="white",
+         xlab = "Data")
   })
   
-  output$plot2 <- renderPlot({
+  suppressWarnings(
+    output$plot2 <- renderPlot({
     dist <- input$dist
     n <- input$n
     if(length(means()>1)){
-    hist(means(),xlim=c(mean(data())-2*sd(data()),mean(data())+2*sd(data())),
+    hist(means(),
+         xlim=c(min(data()),max(data())),
          main=paste("Sample Means: Approximately ~ N(",round(mean(means()),3),",",round(sd(means()),3),")",sep=''),
-         col = "yellow")
+         col = rgb(.933,.694,.0667),
+         xlab = paste(length(allMeans)," Sample Means Taken",sep=""),
+         prob = T)
+      if(length(means()>2) & input$density==T){
+      lines(density(means(),adjust=2))
+      }
     }
   })
+  )
   
   # Generate a summary of the data
   output$summary1 <- renderPrint({
